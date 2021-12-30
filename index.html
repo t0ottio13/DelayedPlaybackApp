@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Delayed Playback Camera</title>
+    <style>
+    canvas, video{ border: 1px solid gray; }
+    </style>
+</head>
+<body>
+<h2>&lt;canvas1&gt;の画像を配列に入れて、&lt;canvas2&gt;に遅延表示</h2>
+video　　　　　　　　　　　　　　　　　canvas1　　　　　　　　　　　　　　　　　canvas2<br>
+<video id="video" width="300" height="200"></video>
+<canvas id="canvas1" width="300" height="200"></canvas>
+<canvas id="canvas2" width="300" height="200"></canvas>
+<script>
+let imageMax = 110;   // 遅延最大時間　最大10秒
+let imageArray = new Array(imageMax); // 画像保存用
+let imageNumber = 0;  // 現在の画像番号
+let imageDisplay = 0; // 表示番号
+let imageDelay = 100;  // 表示遅延  1秒
+window.onload = () => {
+    const video  = document.querySelector("#video");
+    const canvas1 = document.querySelector("#canvas1");
+    const canvas2 = document.querySelector("#canvas2");
+  // カメラ設定  //
+    const constraints = {
+    audio: false,
+    video: {
+        width: 300,
+        height: 200,
+      facingMode: "user"   // フロントカメラを利用する
+      // facingMode: { exact: "environment" }  // リアカメラを利用する場合
+        }
+    };
+  // カメラを<video>と同期 //
+    navigator.mediaDevices.getUserMedia(constraints)
+    .then( (stream) => {
+    video.srcObject = stream;
+    video.onloadedmetadata = (e) => {
+        video.play();
+    };
+    })
+    .catch( (err) => {
+    console.log(err.name + ": " + err.message);
+    });
+
+    // canvas1 の準備
+    picture = canvas1.getContext("2d");
+    // canvas1に画像を貼り付ける
+    picture.drawImage(video, 0, 0, canvas1.width, canvas1.height);
+
+    // インターバル処理
+    var intervalID = setInterval(function(){
+    // canvas1 の準備
+    picture = canvas1.getContext("2d");
+    // canvas1に画像を貼り付ける
+    picture.drawImage(video, 0, 0, canvas1.width, canvas1.height);
+    // 画像記録番号
+    imageNumber = imageNumber + 1;
+    if(imageNumber >= imageMax){
+        imageNumber =0;
+    };
+    // canvas1から画像を取得して変数に入れる
+    imageArray[imageNumber]= picture.getImageData(0, 0, canvas1.width, canvas1.height);
+    // 遅延画像番号
+    imageDisplay = imageNumber - imageDelay;
+    if(imageDisplay < 0 ){
+      imageDisplay = imageDisplay + imageMax; // マイナスの処理
+    }
+    // エラー回避処理
+    try {
+    // canvas2 に変数の画像を貼り付ける
+        document.getElementById("canvas2").getContext('2d').putImageData(imageArray[imageDisplay], 0, 0);
+    }catch(e){
+      // エラー時には何もしない
+        };
+    }, 100);
+};
+</script>
+</body>
+</html>
