@@ -16,46 +16,55 @@
         }
 
         .delay_screen {
-            margin: 50px 0px;
+            margin-top: 50px;
         }
 
         .hidden_screen {
             display: none;
         }
+
+        .setting_container {
+            margin-bottom: 50px;
+        }
     </style>
 </head>
 <body>
     <h2>フォーム確認</h2>
-        <!-- video　　　　　　　　　　　　　　　　　canvas1　　　　　　　　　　　　　　　　　canvas2<br> -->
         <div class="container">
-            <canvas class="delay_screen" id="canvas2" width="600" height="400"></canvas>
-            <canvas class="hidden_screen" id="canvas1" width="600" height="400"></canvas>
-            <div class="setting_container">
-                <video  class="realtime_screen" id="video" width="300" height="200" ></video>
-                <select>
-                    <option value=1>1 秒</option>
-                    <option value=2>2 秒</option>
-                    <option value=3>3 秒</option>
-                    <option value=4>4 秒</option>
-                    <option value=5 selected>5 秒</option>
-                    <option value=6>6 秒</option>
-                    <option value=7>7 秒</option>
-                    <option value=8>8 秒</option>
-                    <option value=9>9 秒</option>
-                    <option value=10>10 秒</option>
-                </select>
+            <div class="delay_screen_container">
+                <canvas class="delay_screen" id="canvas2" width="600" height="400"></canvas>
             </div>
+            <div class="setting_container">
+                <form name="form1">
+                    <select id="delay_seconds">
+                        <option value=1>1 秒</option>
+                        <option value=2>2 秒</option>
+                        <option value=3>3 秒</option>
+                        <option value=4>4 秒</option>
+                        <option value=5 selected>5 秒</option>
+                        <option value=6>6 秒</option>
+                        <option value=7>7 秒</option>
+                        <option value=8>8 秒</option>
+                        <option value=9>9 秒</option>
+                        <option value=10>10 秒</option>
+                    </select>
+                <input type="button" value="変更する" onclick="ChangeSecondes();">
+
+                </form>
+            </div>
+            <canvas class="hidden_screen" id="canvas1" width="600" height="400"></canvas>
+            <video  class="realtime_screen" id="video" width="300" height="200" ></video>
         </div>
         <script>
-            let imageMax = 110;   // 遅延最大時間　最大10秒
+            let imageMax = 110;   // 遅延最大時間 最大10秒
             let imageArray = new Array(imageMax); // 画像保存用
             let imageNumber = 0;  // 現在の画像番号
             let imageDisplay = 0; // 表示番号
             let imageDelay = 50;  // 表示遅延  5秒
             window.onload = () => {
-                const video  = document.querySelector("#video");
-                const canvas1 = document.querySelector("#canvas1");
-                const canvas2 = document.querySelector("#canvas2");
+                let video  = document.querySelector("#video");
+                let canvas1 = document.querySelector("#canvas1");
+                let canvas2 = document.querySelector("#canvas2");
 
                 // カメラ設定  //
                 const constraints = {
@@ -91,6 +100,7 @@
                     // canvas1 の準備
                     picture = canvas1.getContext("2d");
                     // canvas1に画像を貼り付ける
+                    picture.clearRect(0,0,canvas1.width, canvas1.height);
                     picture.drawImage(video, 0, 0, canvas1.width, canvas1.height);
                     // 画像記録番号
                     imageNumber = imageNumber + 1;
@@ -112,6 +122,14 @@
                         // エラー時には何もしない
                         };
                 }, 100);
+            };
+
+            function ChangeSecondes(){
+                let delay_second = document.getElementById('delay_seconds');
+                let imageDelay = delay_second.value*10;
+                console.log("遅延秒数は"+ delay_second.value + "秒です。");
+                alert("まだ開発中やで");
+                return
             };
         </script>
     </body>
