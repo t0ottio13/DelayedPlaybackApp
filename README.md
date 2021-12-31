@@ -1,4 +1,5 @@
 # DelayedPlaybackApp
+https://t0ottio13.github.io/DelayedPlaybackApp/
 
 リアルタイムの映像を遅延させて表示することができます.
 
